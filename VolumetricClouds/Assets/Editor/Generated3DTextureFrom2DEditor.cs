@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System;
 
 public class Generated3DTextureFrom2DEditor : EditorWindow
 {
     Texture2D tex;
-    string textureName;
-    Vector3Int dims;
+    string textureName = "Cloud";
+    Vector3Int dims = new Vector3Int(128, 128, 256);
+    Vector2Int nbImage = new Vector2Int(16, 16);
 
     // Add menu named "My Window" to the Window menu
     [MenuItem("Generate Textures/From 2D texture")]
@@ -28,6 +30,7 @@ public class Generated3DTextureFrom2DEditor : EditorWindow
         EditorGUILayout.EndHorizontal();
 
         dims = EditorGUILayout.Vector3IntField("3D texture dimensions", dims);
+        nbImage = EditorGUILayout.Vector2IntField("Number of images", nbImage);
 
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel("Texture name", EditorStyles.boldLabel);
@@ -36,11 +39,11 @@ public class Generated3DTextureFrom2DEditor : EditorWindow
 
         if (GUILayout.Button("Generate 3D texture !"))
         {
-            Create3DTexture(tex, dims, textureName);
+            Create3DTexture(tex, dims, nbImage ,textureName);
         }
     }
 
-    static void Create3DTexture(Texture2D tex, Vector3Int dims, string name)
+    static void Create3DTexture(Texture2D tex, Vector3Int dims, Vector2Int nbImage, string name)
     {
         // Configure the texture
         TextureFormat format = TextureFormat.RGBA32;
@@ -62,7 +65,12 @@ public class Generated3DTextureFrom2DEditor : EditorWindow
                 int yOffset = y * dims[0];
                 for (int x = 0; x < dims[0]; x++)
                 {
-                    //colors[x + yOffset + zOffset] = tex[];
+                    int texX = x + z * dims.x % tex.width;
+                    int texY = tex.height - (y + (int)(z / nbImage.x) * dims.y);
+                    float alpha = tex.GetPixel(texX, texY).r;
+                    Color col = new Color(1.0f, 1.0f, 1.0f, alpha);
+
+                    colors[x + yOffset + zOffset] = col;
                 }
             }
         }
