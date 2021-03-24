@@ -11,6 +11,8 @@
         Tags { "Queue" = "Transparent" "RenderType" = "Transparent" }
         Blend One OneMinusSrcAlpha
         LOD 100
+        ZTest LEqual
+        ZWrite On 
 
         Pass
         {
@@ -36,6 +38,12 @@
                 float4 vertex : SV_POSITION;
                 float3 objectVertex : TEXCOORD0;
                 float3 vectorToSurface : TEXCOORD1;
+            };
+
+            struct frag_out
+            {
+                float4 color : SV_TARGET;
+                float depth : SV_DEPTH;
             };
 
             sampler3D _MainTex;
@@ -65,7 +73,14 @@
                 return color;
             }
 
-            fixed4 frag(v2f i) : SV_Target
+            // Converts local position to depth value
+            float localToDepth(float3 localPos)
+            {
+                float4 clipPos = UnityObjectToClipPos(float4(localPos, 1.0f));
+                return clipPos.z / clipPos.w;
+            }
+
+            frag_out frag(v2f i)
             {
                 // Start raymarching at the front surface of the object
                 float3 rayOrigin = i.objectVertex;
@@ -89,7 +104,14 @@
                     }
                 }
 
-                return color;
+                //return color;
+
+                frag_out output;
+                output.color = color;
+                //output.depth = localToDepth(rayOrigin + rayDirection * (i * _StepSize) - float3(0.5f, 0.5f, 0.5f));
+                output.depth = float3(0.5f, 0.5f, 0.5f);
+
+                return output;
             }
             ENDCG
         }
