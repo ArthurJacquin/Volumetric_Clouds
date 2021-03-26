@@ -19,10 +19,10 @@ public class Noise3D
 
     }
 
-    public static float Cloud()
-    { 
+    //public static float Cloud()
+    //{ 
     
-    }
+    //}
 
 
 }
