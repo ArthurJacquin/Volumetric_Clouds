@@ -45,7 +45,33 @@ public class D3Brush : EditorWindow
                 {
                     float alpha = brush2D.GetPixel(x, y).r;
 
-                    alpha /= Mathf.Abs(Mathf.Pow(Vector3.Distance(middlePixel, new Vector3(x, y, z)), gradientCoeff));
+                    alpha /= Mathf.Abs(Vector3.Distance(middlePixel, new Vector3(x, y, z))) * gradientCoeff;
+                    if (alpha < gradientThreshold)
+                        alpha = 0.0f;
+
+                    Color col = new Color(1.0f, 1.0f, 1.0f, alpha);
+                    colors[x + yOffset + zOffset] = col;
+                }
+            }
+        }
+
+        //Deuxieme moitié
+        for (int z = size / 2 - 1; z >= 0; z--)
+        {
+            int zOffset = z * size * size;
+            for (int y = 0; y < size; y++)
+            {
+                int yOffset = y * size;
+                for (int x = 0; x < size; x++)
+                {
+                    float alpha = brush2D.GetPixel(x, y).r;
+
+                    if(gradientCoeff != 0)
+                        alpha /= Mathf.Abs(Vector3.Distance(middlePixel, new Vector3(x, y, z))) * gradientCoeff;
+
+                    if (alpha < gradientThreshold)
+                        alpha = 0.0f;
+
                     Color col = new Color(1.0f, 1.0f, 1.0f, alpha);
                     colors[x + yOffset + zOffset] = col;
                 }
@@ -59,7 +85,7 @@ public class D3Brush : EditorWindow
         texture.Apply();
 
         // Save the texture to your Unity Project
-        AssetDatabase.CreateAsset(texture, "Assets/Textures/Test.asset");
+        AssetDatabase.CreateAsset(texture, "Assets/Textures/" + brush2D.name + ".asset");
     }
 
 
@@ -70,18 +96,15 @@ public class D3Brush : EditorWindow
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.PrefixLabel("Base texture", EditorStyles.boldLabel);
         brush2D = (Texture2D)EditorGUILayout.ObjectField(brush2D, typeof(Texture2D), false, GUILayout.Width(70), GUILayout.Height(70));
-
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.PrefixLabel("Parameters", EditorStyles.boldLabel);
-        gradientCoeff = EditorGUILayout.FloatField("gradient", gradientCoeff);
 
-        gradientThreshold = EditorGUILayout.FloatField("threshold", gradientThreshold);
+        EditorGUILayout.PrefixLabel("Parameters", EditorStyles.boldLabel);
+        gradientCoeff = EditorGUILayout.Slider("Gradient Coefficient", gradientCoeff, 0, 5);
+        gradientThreshold = EditorGUILayout.Slider("Gradient Threshold", gradientThreshold, 0, 1);
 
         if (GUILayout.Button("Generate 3D brush !"))
         {
             create3DTextureFromBrush(brush2D, gradientCoeff, gradientThreshold);
         }
     }
-
-
 }
