@@ -12,7 +12,7 @@ public class Generated3DTextureFrom2DEditor : EditorWindow
     Vector2Int nbImage = new Vector2Int(16, 16);
 
     // Add menu named "My Window" to the Window menu
-    [MenuItem("Generate Textures/From 2D texture")]
+    [MenuItem("Cloud Drawing/Generate Textures/From 2D texture")]
     static void Init()
     {
         // Get existing open window or if none, make a new one:
