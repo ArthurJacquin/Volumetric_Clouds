@@ -28,9 +28,12 @@ public class Generate3DTextureEditor : EditorWindow
 
     void OnGUI()
     {
+        EditorGUILayout.LabelField("Parameters", EditorStyles.boldLabel);
         name = EditorGUILayout.TextField("Texture name", name);
         size = EditorGUILayout.IntField("Texture size", size);
         type = (TextureType)EditorGUILayout.EnumPopup("Texture type", type);
+
+        EditorGUILayout.Space();
 
         if (GUILayout.Button("Generate 3D texture !"))
         {
@@ -79,7 +82,7 @@ public class Generate3DTextureEditor : EditorWindow
         texture.Apply();
 
         // Save the texture to your Unity Project
-        AssetDatabase.CreateAsset(texture, "Assets/Textures/" + name + ".asset");
+        AssetDatabase.CreateAsset(texture, "Assets/Textures/Texture3D/" + name + ".asset");
     }
 
     /// <summary>
@@ -122,6 +125,6 @@ public class Generate3DTextureEditor : EditorWindow
         texture.Apply();
 
         // Save the texture to your Unity Project
-        AssetDatabase.CreateAsset(texture, "Assets/Textures/" + name + ".asset");
+        AssetDatabase.CreateAsset(texture, "Assets/Textures/Texture3D/" + name + ".asset");
     }
 }
